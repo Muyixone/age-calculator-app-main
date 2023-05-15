@@ -6,6 +6,7 @@
 *.fig
 style-guide.md
 README-template.md
+guides.md
 design
 
 # Avoid accidental XD upload if you convert the design file

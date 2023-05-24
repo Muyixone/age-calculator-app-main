@@ -3,6 +3,9 @@ const dayInput = document.getElementById('day-input');
 const monthInput = document.getElementById('month-input');
 const yearInput = document.getElementById('year-input');
 const inputs = document.getElementsByTagName('input');
+const yearErrMessage = document.getElementById('err-msg-year');
+const monthErrMessage = document.getElementById('err-msg-month');
+const dayErrMessage = document.getElementById('err-msg-day');
 
 form.addEventListener('input', (e) => {
   e.preventDefault();
@@ -13,7 +16,7 @@ form.addEventListener('input', (e) => {
   const dateString = `${year}-${month}-${day}`;
   disableFutureDateInputs(dateString);
 
-  // dateIsValid(dateString);
+  dateIsValid(dateString);
 
   // if (isValid) {
   //   console.log('Valid date');
@@ -27,18 +30,29 @@ function dateIsValid(dateString) {
 
   // Check if date inputed is inline with regex
   if (dateString.match(regex) === null) {
-    return false;
+    return AddInputErrorClass();
   }
 
   const date = new Date(dateString);
   const timeStamp = date.getTime();
 
-  const [year, month, day] = dateString.split('-');
+  // Check if time stamp is valid
+  // An invalid timestamp will return NaN
   if (typeof timeStamp !== 'number' || Number.isNaN(timeStamp)) {
-    return console.log('Not a valid date');
+    dayErrMessage.innerHTML = `Must be a valid day`;
+    monthErrMessage.innerHTML = `Must be a valid month`;
+    return AddInputErrorClass();
   }
 
-  return console.log(date.toISOString().startsWith(dateString));
+  //FIGURE OUT HOW TO REMOVE THE 'MUST BE VALID DAY' AND REPLACE WITH 'MUST BE VALID DATE'
+  if (!date.getDate()) {
+    dayErrMessage.innerHTML = `Must be a valid date`;
+  }
+  monthErrMessage.innerHTML = '';
+  dayErrMessage.innerHTML = '';
+  clearInputError();
+
+  return date.toISOString().startsWith(dateString);
 }
 
 function disableFutureDateInputs(inputVal) {
@@ -46,18 +60,19 @@ function disableFutureDateInputs(inputVal) {
 
   let year = todaysDate.getFullYear();
   let month = ('0' + (todaysDate.getMonth() + 1)).slice(-2);
-
   let day = ('0' + todaysDate.getDate()).slice(-2);
   let maxDate = `${year}-${month}-${day}`;
   let result = maxDate >= inputVal ? true : false;
 
   if (!result) {
-    return inputError();
+    yearErrMessage.innerHTML = `Year must be in the past`;
+    return AddInputErrorClass();
   }
+  yearErrMessage.innerHTML = '';
   clearInputError();
 }
 
-function inputError() {
+function AddInputErrorClass() {
   for (const input of inputs) {
     input.classList.add('invalid-input');
   }

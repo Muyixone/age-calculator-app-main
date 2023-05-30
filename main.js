@@ -14,45 +14,46 @@ form.addEventListener('input', (e) => {
   const year = yearInput.value;
 
   const dateString = `${year}-${month}-${day}`;
-  disableFutureDateInputs(dateString);
 
-  dateIsValid(dateString);
+  // Check if values inputed is valid in line with regex pattern defined
+  let regex = /^\d{4}-\d{2}-\d{2}$/;
 
-  // if (isValid) {
-  //   console.log('Valid date');
-  // } else {
-  //   console.log('Invalid');
-  // }
-});
-
-function dateIsValid(dateString) {
-  const regex = /^\d{4}-\d{2}-\d{2}$/;
-
-  // Check if date inputed is inline with regex
   if (dateString.match(regex) === null) {
     return AddInputErrorClass();
   }
 
-  const date = new Date(dateString);
-  const timeStamp = date.getTime();
+  return [dateIsValid(dateString), disableFutureDateInputs(dateString)];
+});
 
+function dateIsValid(dateString) {
+  // Create a new Date object with the inputed values(dateString) passed as a parameter
   // Check if time stamp is valid
   // An invalid timestamp will return NaN
-  if (typeof timeStamp !== 'number' || Number.isNaN(timeStamp)) {
-    dayErrMessage.innerHTML = `Must be a valid day`;
-    monthErrMessage.innerHTML = `Must be a valid month`;
-    return AddInputErrorClass();
+  // Check if the input passed is a valid date string by passing it
+  // Into the date.toISOString function which returns either a true or false value
+
+  const date = new Date(dateString);
+  const timeStamp = date.getTime();
+  //FIGURE OUT HOW TO REMOVE THE 'MUST BE VALID DAY' AND REPLACE WITH 'MUST BE VALID DATE'
+
+  if (Object.prototype.toString.call(date) === '[object Date]') {
+    if (!isNaN(timeStamp)) {
+      // console.log(date.getDate());
+    }
   }
 
-  //FIGURE OUT HOW TO REMOVE THE 'MUST BE VALID DAY' AND REPLACE WITH 'MUST BE VALID DATE'
-  if (!date.getDate()) {
-    dayErrMessage.innerHTML = `Must be a valid date`;
-  }
+  // if (typeof timeStamp !== 'number' || Number.isNaN(timeStamp)) {
+  // dayErrMessage.innerHTML = `Must be a valid day`;
+  //   monthErrMessage.innerHTML = `Must be a valid month`;
+  //   return AddInputErrorClass();
+  // }
+
   monthErrMessage.innerHTML = '';
   dayErrMessage.innerHTML = '';
   clearInputError();
 
-  return date.toISOString().startsWith(dateString);
+  return dateString;
+  //return date.toISOString().startsWith(dateString);
 }
 
 function disableFutureDateInputs(inputVal) {
@@ -62,6 +63,7 @@ function disableFutureDateInputs(inputVal) {
   let month = ('0' + (todaysDate.getMonth() + 1)).slice(-2);
   let day = ('0' + todaysDate.getDate()).slice(-2);
   let maxDate = `${year}-${month}-${day}`;
+
   let result = maxDate >= inputVal ? true : false;
 
   if (!result) {
@@ -73,14 +75,14 @@ function disableFutureDateInputs(inputVal) {
 }
 
 function AddInputErrorClass() {
-  for (const input of inputs) {
-    input.classList.add('invalid-input');
+  for (const i of inputs) {
+    i.classList.add('invalid-input');
   }
 }
 
 function clearInputError() {
-  for (const input of inputs) {
-    input.classList.remove('invalid-input');
+  for (const i of inputs) {
+    i.classList.remove('invalid-input');
   }
 }
 

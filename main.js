@@ -6,6 +6,11 @@ const inputs = document.getElementsByTagName('input');
 const yearErrMessage = document.getElementById('err-msg-year');
 const monthErrMessage = document.getElementById('err-msg-month');
 const dayErrMessage = document.getElementById('err-msg-day');
+const yearAgeMssg = document.getElementById('years-output');
+const monthAgeMssg = document.getElementById('months-output');
+const dayAgeMssg = document.getElementById('days-output');
+
+const todaysDate = new Date();
 
 form.addEventListener('input', (e) => {
   e.preventDefault();
@@ -22,7 +27,11 @@ form.addEventListener('input', (e) => {
     return AddInputErrorClass();
   }
 
-  return [dateIsValid(dateString), disableFutureDateInputs(dateString)];
+  return [
+    dateIsValid(dateString),
+    disableFutureDateInputs(dateString),
+    calculateAge(dateString),
+  ];
 });
 
 function dateIsValid(dateString) {
@@ -31,34 +40,35 @@ function dateIsValid(dateString) {
   // An invalid timestamp will return NaN
   // Check if the input passed is a valid date string by passing it
   // Into the date.toISOString function which returns either a true or false value
-
   const date = new Date(dateString);
   const timeStamp = date.getTime();
-  //FIGURE OUT HOW TO REMOVE THE 'MUST BE VALID DAY' AND REPLACE WITH 'MUST BE VALID DATE'
+  /////////////////////////////////////////////////////////
+  /* BUGS TO WORK ON
+   * Figure out how to remove the 'Must be a valid day' and replace with 'Must be a valid date, when only the day input is invalid
+   * The AddInputErrorClass function does not trigger when date is invalid
+   *
+   */
+  ////////////////////////////////////////////////////////
 
-  if (Object.prototype.toString.call(date) === '[object Date]') {
-    if (!isNaN(timeStamp)) {
-      // console.log(date.getDate());
-    }
+  if (typeof timeStamp !== 'number' || Number.isNaN(timeStamp)) {
+    dayErrMessage.innerHTML = `Must be a valid day`;
+    monthErrMessage.innerHTML = `Must be a valid month`;
+    return AddInputErrorClass();
   }
 
-  // if (typeof timeStamp !== 'number' || Number.isNaN(timeStamp)) {
-  // dayErrMessage.innerHTML = `Must be a valid day`;
-  //   monthErrMessage.innerHTML = `Must be a valid month`;
+  // if (date.getDate() !== timeStamp) {
+  //   dayErrMessage.innerHTML = `Must be a valid date`;
   //   return AddInputErrorClass();
   // }
-
   monthErrMessage.innerHTML = '';
   dayErrMessage.innerHTML = '';
   clearInputError();
 
-  return dateString;
-  //return date.toISOString().startsWith(dateString);
+  // return dateString;
+  return date.toISOString().startsWith(dateString);
 }
 
 function disableFutureDateInputs(inputVal) {
-  let todaysDate = new Date();
-
   let year = todaysDate.getFullYear();
   let month = ('0' + (todaysDate.getMonth() + 1)).slice(-2);
   let day = ('0' + todaysDate.getDate()).slice(-2);
@@ -79,14 +89,47 @@ function AddInputErrorClass() {
     i.classList.add('invalid-input');
   }
 }
-
 function clearInputError() {
   for (const i of inputs) {
     i.classList.remove('invalid-input');
   }
 }
 
-//disableFutureDateInputs('2024-12-20');
-// years - output;
-// months - output;
-// days - output;
+function calculateAge(dobVal) {
+  const thisYear = todaysDate.getFullYear();
+  const thisMonth = ('0' + (todaysDate.getMonth() + 1)).slice(-2) * 1;
+  const today = ('0' + todaysDate.getDate()).slice(-2) * 1;
+
+  if (dobVal === '') return;
+
+  const value = dobVal.split(/\s*\-\s*/g);
+
+  const [dobYear, dobMonth, dobDay] = value;
+
+  // get year, month and day
+  yearAge = thisYear - dobYear;
+  let monthAge = thisMonth - dobMonth;
+  let dayAge = today - dobDay;
+
+  if (thisMonth >= dobMonth) {
+    monthAge;
+  } else {
+    yearAge--;
+    monthAge = 12 + thisMonth - dobMonth;
+  }
+
+  if (today >= dobDay) {
+    dayAge;
+  } else {
+    monthAge--;
+    dayAge = 31 + today - dobDay;
+  }
+
+  yearAgeMssg.innerHTML =
+    `${yearAge}` > 1 ? `${yearAge} years` : `${yearAge} year`;
+
+  monthAgeMssg.innerHTML =
+    `${monthAge}` > 1 ? `${monthAge} months` : `${monthAge} month`;
+
+  dayAgeMssg.innerHTML = `${dayAge}` > 1 ? `${dayAge} days` : `${dayAge} day`;
+}

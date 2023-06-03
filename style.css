@@ -56,6 +56,39 @@ input:focus {
     border: 1.5px solid var(--Purple);
     box-shadow: 0 2px 10px var(--Purple);    
 }
+
+/* input error */
+input.error,
+textarea.error,
+select.error {
+    border-color: #dc3545;
+}
+
+input.error:focus,
+textarea.error:focus,
+select.error:focus {
+    box-shadow: 0 0 0 0.25rem rgb(220 53 69 / 25%);
+}
+
+/* input success */
+input.success,
+textarea.success,
+select.success {
+    border-color: var(--Light_grey);
+}
+input.success:focus,
+textarea.success:focus {
+    border-color: var(--Purple);
+}
+
+
+
+
+
+
+
+
+
 hr {
     width: 90%;
     height: 2px;
@@ -64,9 +97,9 @@ hr {
     margin: 40px auto;
 }
 
-.invalid-input {
+/* .invalid-input {
     border: 2px solid red
-}
+} */
 
 
 

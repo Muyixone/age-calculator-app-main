@@ -37,24 +37,9 @@ form.addEventListener('submit', (e) => {
     return false;
   }
 
-  validateDate(dateString);
-  // return [
-  //   dateIsValid(dateString),
-  //   disableFutureDateInputs(dateString),
-  //   calculateAge(dateString),
-  // ];
+  if (!validateDate(dateString)) return;
+  calculateAge(dateString);
 });
-
-/*
- * display input error message
- */
-
-// function AddInputErrorClass(input, message) {
-//   return showMessage(input, message, false);
-// }
-// function clearInputError(input) {
-//   return showMessage(input, '', true);
-// }
 
 /*
  * validate input values
@@ -62,7 +47,6 @@ form.addEventListener('submit', (e) => {
  * Check if time stamp is valid
  * An invalid timestamp will return NaN
  * Check if the input passed is a valid date string by passing it
-
  */
 
 function validateDate(input) {
@@ -72,10 +56,18 @@ function validateDate(input) {
 
   if (typeof timestamp !== 'number' || Number.isNaN(timestamp)) {
     AddInputErrorClass();
+    monthErrMessage.innerHTML = 'Must be a valid month';
+    dayErrMessage.innerHTML = 'Must be a valid day';
+    disableFutureYearInput(input);
+    return false;
+  }
+  if (date.getDate() !== Number(input.slice(-2))) {
+    dayErrMessage.innerHTML = 'Must be a valid date';
+    AddInputErrorClass();
     return false;
   }
 
-  if (disableFutureYearInput(input)) return;
+  if (disableFutureYearInput(input)) return false;
 
   clearInputError();
   date.toISOString().startsWith(input);
@@ -96,6 +88,10 @@ function clearInputError() {
     i.classList.contains('error')
       ? i.classList.remove('error')
       : i.classList.add('success');
+  }
+  const smallEl = document.getElementsByTagName('small');
+  for (const i of smallEl) {
+    i.innerHTML = '';
   }
 }
 

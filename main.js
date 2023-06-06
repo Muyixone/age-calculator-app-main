@@ -33,7 +33,8 @@ form.addEventListener('submit', (e) => {
   // Check if values inputed is valid in line with regex pattern defined
   let regex = /^\d{4}-\d{2}-\d{2}$/;
   if (dateString.match(regex) === null) {
-    return console.log('date does not match regex');
+    AddInputErrorClass();
+    return false;
   }
 
   validateDate(dateString);
@@ -47,14 +48,6 @@ form.addEventListener('submit', (e) => {
 /*
  * display input error message
  */
-// function showMessage(message, type) {
-//   //get the small element and set the message
-//   const msg = document.querySelectorAll('small');
-//   msg.innerText = message;
-//   // update the class for the input
-//   msg.className = type ? 'success' : 'error';
-//   console.log(type);
-// }
 
 // function AddInputErrorClass(input, message) {
 //   return showMessage(input, message, false);
@@ -65,70 +58,37 @@ form.addEventListener('submit', (e) => {
 
 /*
  * validate input values
+ * Create a new Date object with the inputed values(dateString) passed as a parameter
+ * Check if time stamp is valid
+ * An invalid timestamp will return NaN
+ * Check if the input passed is a valid date string by passing it
+
  */
 
 function validateDate(input) {
   const date = new Date(input);
 
   const timestamp = date.getTime();
+
   if (typeof timestamp !== 'number' || Number.isNaN(timestamp)) {
     AddInputErrorClass();
     return false;
   }
-  return date.toISOString().startsWith(input);
+
+  if (disableFutureYearInput(input)) return;
+
+  clearInputError();
+  date.toISOString().startsWith(input);
+  return true;
 }
 
+// Add or remove error class to input element
 function AddInputErrorClass() {
   for (const i of inputs) {
-    i.classList.add('error');
+    i.classList.contains('success')
+      ? i.classList.remove('success')
+      : i.classList.add('error');
   }
-}
-// function dateIsValid(dateString) {
-//   // Create a new Date object with the inputed values(dateString) passed as a parameter
-//   // Check if time stamp is valid
-//   // An invalid timestamp will return NaN
-//   // Check if the input passed is a valid date string by passing it
-//   // Into the date.toISOString function which returns either a true or false value
-
-//   const date = new Date(dateString);
-//   const timeStamp = date.getTime();
-//   /////////////////////////////////////////////////////////
-//   /* BUGS TO WORK ON
-//    * Figure out how to remove the 'Must be a valid day' and replace with 'Must be a valid date, when only the day input is invalid
-//    * The AddInputErrorClass function does not trigger when date is invalid
-//    *
-//    */
-//   ////////////////////////////////////////////////////////
-
-//   if (typeof timeStamp !== 'number' || Number.isNaN(timeStamp)) {
-//     dayErrMessage.innerHTML = `Must be a valid day`;
-//     monthErrMessage.innerHTML = `Must be a valid month`;
-//     return AddInputErrorClass();
-//   }
-
-//   monthErrMessage.innerHTML = '';
-//   dayErrMessage.innerHTML = '';
-//   clearInputError();
-
-//   // return dateString;
-//   return date.toISOString().startsWith(dateString);
-// }
-
-function disableFutureDateInputs(inputVal) {
-  let year = todaysDate.getFullYear();
-  let month = ('0' + (todaysDate.getMonth() + 1)).slice(-2);
-  let day = ('0' + todaysDate.getDate()).slice(-2);
-  let maxDate = `${year}-${month}-${day}`;
-
-  let result = maxDate >= inputVal ? true : false;
-
-  if (!result) {
-    yearErrMessage.innerHTML = `Year must be in the past`;
-    return AddInputErrorClass();
-  }
-  yearErrMessage.innerHTML = '';
-  clearInputError();
-  return true;
 }
 
 function clearInputError() {
@@ -137,6 +97,23 @@ function clearInputError() {
       ? i.classList.remove('error')
       : i.classList.add('success');
   }
+}
+
+function disableFutureYearInput(inputVal) {
+  let year = todaysDate.getFullYear();
+  let month = ('0' + (todaysDate.getMonth() + 1)).slice(-2);
+  let day = ('0' + todaysDate.getDate()).slice(-2);
+  let maxDate = `${year}-${month}-${day}`;
+
+  let result = maxDate >= inputVal ? true : false;
+
+  if (!result) {
+    AddInputErrorClass();
+    yearErrMessage.innerHTML = `Year must be in the past`;
+    return true;
+  }
+  yearErrMessage.innerHTML = '';
+  return;
 }
 
 function calculateAge(dobVal) {

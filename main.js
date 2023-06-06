@@ -36,7 +36,6 @@ form.addEventListener('submit', (e) => {
     AddInputErrorClass();
     return false;
   }
-
   if (!validateDate(dateString)) return;
   calculateAge(dateString);
 });
@@ -59,12 +58,12 @@ function validateDate(input) {
     monthErrMessage.innerHTML = 'Must be a valid month';
     dayErrMessage.innerHTML = 'Must be a valid day';
     disableFutureYearInput(input);
-    return false;
+    return;
   }
   if (date.getDate() !== Number(input.slice(-2))) {
     dayErrMessage.innerHTML = 'Must be a valid date';
     AddInputErrorClass();
-    return false;
+    return;
   }
 
   if (disableFutureYearInput(input)) return false;
@@ -74,7 +73,7 @@ function validateDate(input) {
   return true;
 }
 
-// Add or remove error class to input element
+// CSS validation functions
 function AddInputErrorClass() {
   for (const i of inputs) {
     i.classList.contains('success')
@@ -82,7 +81,6 @@ function AddInputErrorClass() {
       : i.classList.add('error');
   }
 }
-
 function clearInputError() {
   for (const i of inputs) {
     i.classList.contains('error')
@@ -95,6 +93,7 @@ function clearInputError() {
   }
 }
 
+// Future year input validation
 function disableFutureYearInput(inputVal) {
   let year = todaysDate.getFullYear();
   let month = ('0' + (todaysDate.getMonth() + 1)).slice(-2);
@@ -105,13 +104,14 @@ function disableFutureYearInput(inputVal) {
 
   if (!result) {
     AddInputErrorClass();
-    yearErrMessage.innerHTML = `Year must be in the past`;
+    yearErrMessage.innerHTML = `Must be in the past`;
     return true;
   }
   yearErrMessage.innerHTML = '';
   return;
 }
 
+// Calculate the age of the user
 function calculateAge(dobVal) {
   const thisYear = todaysDate.getFullYear();
   const thisMonth = ('0' + (todaysDate.getMonth() + 1)).slice(-2) * 1;

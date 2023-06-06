@@ -46,7 +46,7 @@ input {
     margin-top: 5px;
     padding: 1rem .7rem;
     height: 15px;
-    width: 100px;    
+    width: 102px;    
     border: 1.5px solid var(--Light_grey);
     border-radius: 5px;
 }
@@ -62,7 +62,6 @@ input.error,
 textarea.error,
 select.error {
     border-color: var(--Light_red);
-    color: var(--Light_red);
 }
 
 input.error:focus,
@@ -83,7 +82,10 @@ textarea.success:focus {
 }
 
 
-
+.pair-input small {
+    color: var(--Light_red);
+    font-size: 11px;
+}
 
 
 

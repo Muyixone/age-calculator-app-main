@@ -61,7 +61,8 @@ input:focus {
 input.error,
 textarea.error,
 select.error {
-    border-color: #dc3545;
+    border-color: var(--Light_red);
+    color: var(--Light_red);
 }
 
 input.error:focus,
